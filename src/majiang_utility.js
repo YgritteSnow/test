@@ -6,7 +6,7 @@
  * card 相关的读配置函数
  *************************************************/
 function GetAllCardNo(){
-    return d_majiang_card_ho;
+    return d_majiang_card_key_ho;
 }
 function GetCardNumber(cardNo){
     return d_majiang_card[cardNo]["num"];
@@ -25,7 +25,7 @@ function GetCardFlower(cardNo){
  * card 相关的读配置函数
  *************************************************/
 function GetAllPatternNo(){
-    return d_majiang_pattern_ho;
+    return d_majiang_pattern_key_ho;
 }
 function GetPatternByNo(patternNo){
     return d_majiang_pattern[patternNo]["pattern"];
