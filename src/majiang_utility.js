@@ -3,35 +3,6 @@
  */
 
 /*************************************************
- * card 相关的读配置函数
- *************************************************/
-function GetAllCardNo(){
-    return d_majiang_card_key_ho;
-}
-function GetCardNumber(cardNo){
-    return d_majiang_card[cardNo]["num"];
-}
-function GetCardName(cardNo){
-    return d_majiang_card[cardNo]["name"];
-}
-function GetCardIcon(cardNo){
-    return d_majiang_card[cardNo]["icon"];
-}
-function GetCardFlower(cardNo){
-    return d_majiang_card[cardNo]["flower"];
-}
-
-/*************************************************
- * card 相关的读配置函数
- *************************************************/
-function GetAllPatternNo(){
-    return d_majiang_pattern_key_ho;
-}
-function GetPatternByNo(patternNo){
-    return d_majiang_pattern[patternNo]["pattern"];
-}
-
-/*************************************************
  * 对外函数
  *************************************************/
 const E_SATISFY_SUCCEED = 1;
@@ -323,18 +294,192 @@ function FindPatternsByCardNums( cardnum_list ){
     return result;
 };
 
-function FindPatternsByCard( card_list ){
+FindPatternsByCardNums([1,2,3, 3,3, 4,5,6, 7,7,7, 7,8,9]);
+
+/**
+ * 工具函数，使用排序函数来同时排序多个等长列表
+ * 如果不符合“全部登场”和“至少一个”，将会报错
+ * @param lists
+ * @return 排序后的lists
+ * @constructor
+ */
+function SortLists( lists, sortFunc ){
+    var result = [];
+    for(var idx_small in lists[0]){
+        var item = [];
+        for(var idx_big in lists){
+            item.push(lists[idx_big][idx_small])
+        }
+        result.push(item);
+    }
+    result.sort(sortFunc);
+
+    lists = [];
+    for(var idx_big in result){
+        var item = [];
+        for(var idx_small in result[0]){
+            item.push(result[idx_small][idx_big])
+        }
+        lists.push(item);
+    }
+    return lists;
+}
+
+/**
+ * 给定一个 matchFlowerList 作为要匹配的花色，以及要测试的花色的列表，来计算是否匹配
+ * @param originFlowerList 要检测的花色列表
+ * @param matchFlowerList 要匹配的目标花色
+ * @param needMatch 需要匹配顺序
+ * @returns {boolean}
+ * @constructor
+ */
+function CalIfFlowerMatch(originFlowerList, matchFlowerList, needMatch){
+    var flower_channel_spec = []; // 特定花色的
+    var flower_channel_diff = []; // 需要与其他diff内的互不相同的
+    var flower_channel_any = []; // 任意花色均可
+
+    if (needMatch) { // 需要花色数字匹配，那么一个一个计算花色是否匹配
+    }
+    else { // 不需要花色数字匹配，那么只计算花色是否都有
+        for( var idx in t_flowerList ){
+            if(t_flowerList[idx] != t_comboFlower[idx]){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * 根据数字pattern列表和其对应的花色的列表，计算它满足的所有patternCombo
+ * @param numPatternList
+ * @param flowerList
+ * @returns {Array}
+ * @constructor
+ */
+function GetAllPatternCombo(numPatternList, flowerList) {
+    var res = [];
+    var higherPatternList = [];
+    for(var idx in numPatternList){
+        higherPatternList.push( GetHigherPatternByNo(numPatternList[idx].m_iPatternNo) )
+    }
+
+    // 整理一下要匹配的 pattern 和 flower 的列表
+    var t_d = SortLists([higherPatternList, flowerList], function(a,b){
+        return a.m_iPatternNo > b.m_iPatternNo;
+    });
+    higherPatternList = t_d[0];
+    flowerList = t_d[1];
+
+    // 遍历检查每一个patternCombo
+    for (var idx in GetAllPatternComboNo()) {
+        var comboNo = GetAllPatternComboNo()[idx];
+        var comboNum = GetPatternCombo_num(comboNo);
+
+        // 临时变量，记录需要continue的标志
+        var t_continue_flag = false;
+
+        // 长度不符合，continue
+        if( comboNum != higherPatternList.length ){
+            t_continue_flag = true;
+        }
+        if(t_continue_flag)continue;
+
+        // 数字的模式不符合，continue
+        for( var idx in comboNum ){
+            if( higherPatternList[idx].m_iPatternNo != comboNum[idx] ){
+                t_continue_flag = true;
+                break;
+            }
+        }
+        if(t_continue_flag)continue;
+
+        var comboFlower = GetPatternCombo_flower(comboNo);
+        var comboNeedMatch = GetPatternCombo_needMatch(comboNo);
+
+        if( CalIfFlowerMatch(flowerList, comboFlower, comboNeedMatch) ){
+            res.push(comboNo);
+        }
+    }
+    return res;
+};
+
+/**
+ * 根据牌型来寻找所有满足的patternCombo
+ * @param card_list
+ * @returns {Array}
+ * @constructor
+ */
+function FindPatternsByCard( card_list ) {
     console.log("Begin FindPatternsByCard" + new Date());
     var flower_buff = [];
-    for(var idx in card_list){
+    for (var idx in card_list) {
         var cardno = card_list[idx];
         var card_flower = GetCardFlower(cardno);
-        if( flower_buff[card_flower] == undefined ){
+        if (flower_buff[card_flower] == undefined) {
             flower_buff[card_flower] = []
         }
         flower_buff[card_flower].push(cardno);
     }
-    console.log("End FindPatternsByCard" + new Date());
-};
 
-FindPatternsByCardNums([1,2,3, 3,3, 4,5,6, 7,7,7, 7,8,9]);
+    // 记录所有花色通道的解决方案的列表，如果没有那么置为空列表
+    var flower_solve = [];
+    for (var idx in GetCardFlowerHo) {
+        var flower = GetCardFlowerHo()[idx];
+        if (flower_buff[flower] != undefined) {
+            var card_list = flower_solve[flower];
+            flower_solve[flower] = FindPatternsByCardNums(card_list);
+        }
+        else {
+            flower_solve[flower] = [];
+        }
+    }
+
+    // 遍历花色的索引，用于辅助遍历每个花色的解决方案列表
+    var t_traverseIdx = [];
+    for (var idx in GetCardFlowerHo()) {
+        t_traverseIdx[GetCardFlowerHo()[idx]] = 0
+    }
+
+    // 所有的胡牌牌型
+    var final_result = [];
+
+    // 遍历合并不同花色的解决方案列表
+    var t_traverse_solve = [];
+    var t_traverse_flower = [];
+    // 开始遍历
+    var t_traverseEnd = false; // 标志着遍历了所有可能的组合
+    while (t_traverseEnd) {
+        // 获取当前的遍历的
+        t_traverse_solve = [];
+        t_traverse_flower = [];
+        for (var idx in GetCardFlowerHo()) {
+            var flower = GetCardFlowerHo()[flower]
+            var tri_idx = t_traverseIdx[flower];
+            if (tri_idx < flower_solve[flower].length) {
+                t_traverse_solve += flower_solve[flower][tri_idx];
+                for (var t_idx in flower_solve[flower][tri_idx]) {
+                    t_traverse_flower.push(flower);
+                }
+            }
+        }
+
+        final_result += GetAllPatternCombo(t_traverse_solve, t_traverse_flower);
+
+        // 判断是否遍历结束
+        t_traverseEnd = true;
+        for (var idx in GetCardFlowerHo()) {
+            var flower = GetCardFlowerHo()[idx];
+            if (t_traverseIdx[flower] < flower_solve[flower].length - 1) { // 还可继续遍历的话
+                t_traverseIdx[flower] += 1;
+                t_traverseEnd = false;
+            }
+        }
+    }
+
+    return final_result;
+    console.log("End FindPatternsByCard" + new Date());
+}
+
+FindPatternsByCard([1,2,3,11,12,13,]);
