@@ -145,11 +145,11 @@
               "Y": 173.9998
             },
             "Scale": {
-              "ScaleX": 1.9937,
-              "ScaleY": 6.6692
+              "ScaleX": 2.4644,
+              "ScaleY": 2.8414
             },
-            "RotationSkewX": 11.5984,
-            "RotationSkewY": 11.5777,
+            "RotationSkewX": 11.5996,
+            "RotationSkewY": 11.5784,
             "CColor": {},
             "IconVisible": false,
             "PrePosition": {
@@ -161,7 +161,7 @@
               "Y": 0.0312
             },
             "LeftMargin": 103.0002,
-            "RightMargin": 756.9999,
+            "RightMargin": 756.9998,
             "TopMargin": 456.0002,
             "BottomMargin": 163.9998,
             "Tag": 4,

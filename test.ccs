@@ -3,8 +3,17 @@
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
+        <Image Name="background.jpg" />
         <Image Name="HelloWorld.png" />
+        <Project Name="Layer.csd" Type="Layer" />
         <Project Name="MainScene.csd" Type="Scene" />
+        <PlistParticleFile Name="particle_texture.plist" />
+        <Image Name="pic1.jpg" />
+        <Image Name="pic2.png" />
+        <PlistInfo Name="Plist.csi" Type="Plist" />
+        <Project Name="SecondScene.csd" Type="Scene" />
+        <Project Name="Skeleton.csd" Type="Skeleton" />
+        <Project Name="Scene3D.csd" Type="Scene3D" />
       </RootFolder>
     </Group>
   </SolutionFolder>

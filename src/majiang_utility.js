@@ -303,7 +303,7 @@ FindPatternsByCardNums([1,2,3, 3,3, 4,5,6, 7,7,7, 7,8,9]);
  * @return 排序后的lists
  * @constructor
  */
-function SortLists( lists, sortFunc ){
+function SortLists( lists, sortFuncList ){
     var result = [];
     for(var idx_small in lists[0]){
         var item = [];
@@ -312,7 +312,15 @@ function SortLists( lists, sortFunc ){
         }
         result.push(item);
     }
-    result.sort(sortFunc);
+    result.sort(function(key_list_1, key_list_2){
+        for(var idx in sortFuncList){
+            var sortFunc = sortFuncList[idx];
+            if( !sortFunc(key_list_1[idx], key_list_2) ){
+                return false;
+            }
+        }
+        return true;
+    });
 
     lists = [];
     for(var idx_big in result){
@@ -325,6 +333,130 @@ function SortLists( lists, sortFunc ){
     return lists;
 }
 
+function InList(list, item){
+    for(var idx in list){
+        if(item == list[idx]){
+            return true;
+        }
+    }
+    return false;
+}
+function AllSame_one(list, item){
+    for( var idx in list ){
+        if( item != list[idx] ){
+            return false;
+        }
+    }
+    return true;
+}
+function AllSame_list(listDest, listSrc){
+    for( var idx_src in listSrc){
+        if(!AllSame_one(listDest, listSrc[idx_src])){
+            return false;
+        }
+    }
+    return true;
+}
+function SetDefault(map, key, defaultvalue){
+    if( map[key] == undefined ){
+        map[key] = defaultvalue;
+    }
+    return map;
+}
+function PushListLikeSet(list, item){
+    if(InList(list, item)){
+        return;
+    }
+    list.push(item);
+}
+
+/**
+ * 按顺序匹配实际花色，和花色的匹配模式。
+ * 匹配模式中的数据分为两种：
+ * 1. A类 相同 (1,2,3,4) ：必须等于该channel值
+ * 2. B类 严格不相同 (-1,-2,-3,-4) ：不可以与其他A类或B类通道内的花色相同
+ * 4. C类 任意 (-999) ：完全任意
+ * @param originFlowerList
+ * @param matchChannelList
+ * @param channel2flower 已有的channel到flower的映射
+ * @param flower2channel 已有的flower到channel的映射
+ * @returns {boolean}
+ * @constructor
+ */
+function RecurseFlowerMatch_order_x(originFlowerList, matchChannelList, channel2flower, flower2channel){
+    if( originFlowerList.length != matchFlowerList.length ){
+        return false;
+    }
+
+    // 递归终点
+    if( originFlowerList.length == 1 ){
+        return RecurseFlowerMatch_order_y(originFlowerList, matchChannelList, channel2flower, flower2channel);
+    }
+
+    // 对originFlowerList的第一个结点，遍历其匹配matchChannelList的每一种可能
+    for( var idx in matchChannelList ) {
+        if (RecurseFlowerMatch_order_y(originFlowerList.slice(0, 1), matchChannelList.slice(idx, idx+1), channel2flower, flower2channel)) {
+            return RecurseFlowerMatch_order_x(originFlowerList.slice(1), matchChannelList.slice(1), channel2flower, flower2channel);
+        }
+    }
+}
+
+/**
+ * 按顺序匹配实际花色，和花色的匹配模式。
+ * 匹配模式中的数据分为两种：
+ * 1. A类 相同 (1,2,3,4) ：必须等于该channel值
+ * 2. B类 严格不相同 (-1,-2,-3,-4) ：不可以与其他A类或B类通道内的花色相同
+ * 4. C类 任意 (-999) ：完全任意
+ * @param originFlowerList
+ * @param matchChannelList
+ * @param channel2flower 已有的channel到flower的映射
+ * @param flower2channel 已有的flower到channel的映射
+ * @returns {boolean}
+ * @constructor
+ */
+function RecurseFlowerMatch_order_y(originFlowerList, matchChannelList, channel2flower, flower2channel){
+    if( originFlowerList.length != matchChannelList.length ){
+        return false;
+    }
+
+    if(channel2flower == undefined)channel2flower = {};
+    if(flower2channel == undefined)flower2channel = {};
+
+    for(var idx in originFlowerList){
+        var channel = matchChannelList[idx];
+        var flower = originFlowerList[idx];
+
+        SetDefault(channel2flower, channel, [] );
+        SetDefault(flower2channel, flower, channel );
+
+        if( GetPatternCombo_flower_A(channel) ) { // A类 相同 (1,2,3,4) ：必须等于该channel值
+            if( channel != flower ){
+                return false;
+            }
+        }
+        else if( GetPatternCombo_flower_B(channel) ){ // B类 严格不相同 (-1,-2,-3,-4) ：不可以与其他A类或B类通道内的花色相同
+            if( !AllSame_one(channel2flower[channel]) ) {// 需要和已经进入该channel的所有花色一致
+                return false;
+            }
+            if( !GetPatternCombo_flower_C(flower2channel[flower]) && flower2channel[flower] != channel ){// 该flower已经在的channel只能与此channel相同
+                return false;
+            }
+
+            flower2channel[flower] = channel; // 覆盖为更高级的channel
+        }
+        else if( GetPatternCombo_flower_C(channel) ){ // 如果不是需要互不相同的channel:(-999)
+            // 该flower已经在的channel只能是任意
+            if( !GetPatternCombo_flower_C(flower2channel[flower]) ){
+                return false;
+            }
+        }
+
+        channel2flower[channel].push(flower);
+    }
+
+    return true;
+}
+
 /**
  * 给定一个 matchFlowerList 作为要匹配的花色，以及要测试的花色的列表，来计算是否匹配
  * @param originFlowerList 要检测的花色列表
@@ -334,18 +466,11 @@ function SortLists( lists, sortFunc ){
  * @constructor
  */
 function CalIfFlowerMatch(originFlowerList, matchFlowerList, needMatch){
-    var flower_channel_spec = []; // 特定花色的
-    var flower_channel_diff = []; // 需要与其他diff内的互不相同的
-    var flower_channel_any = []; // 任意花色均可
-
-    if (needMatch) { // 需要花色数字匹配，那么一个一个计算花色是否匹配
+    if (needMatch) { // 需要花色数字匹配，那么一个一个按顺序计算花色是否匹配
+        return RecurseFlowerMatch_order_y(originFlowerList, matchFlowerList);
     }
-    else { // 不需要花色数字匹配，那么只计算花色是否都有
-        for( var idx in t_flowerList ){
-            if(t_flowerList[idx] != t_comboFlower[idx]){
-                return false;
-            }
-        }
+    else { // 不需要花色数字匹配，那么递归计算
+        return RecurseFlowerMatch_order_x
     }
 
     return true;
@@ -366,9 +491,15 @@ function GetAllPatternCombo(numPatternList, flowerList) {
     }
 
     // 整理一下要匹配的 pattern 和 flower 的列表
-    var t_d = SortLists([higherPatternList, flowerList], function(a,b){
-        return a.m_iPatternNo > b.m_iPatternNo;
-    });
+    var t_d = SortLists([higherPatternList, flowerList], (
+            function(a,b){
+                return a.m_iPatternNo > b.m_iPatternNo;
+            },
+            function(a, b) {
+                return a > b;
+            })
+    );
+
     higherPatternList = t_d[0];
     flowerList = t_d[1];
 

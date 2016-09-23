@@ -165,7 +165,7 @@ var d_majiang_card = {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "中"
+        "name": "东"
     }, 
     "161": {
         "count": 1, 
@@ -177,7 +177,7 @@ var d_majiang_card = {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "发"
+        "name": "南"
     }, 
     "171": {
         "count": 1, 
@@ -189,7 +189,7 @@ var d_majiang_card = {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "白"
+        "name": "西"
     }, 
     "181": {
         "count": 1, 
@@ -207,13 +207,13 @@ var d_majiang_card = {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "东"
+        "name": "北"
     }, 
     "71": {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "南"
+        "name": "中"
     }, 
     "141": {
         "count": 1, 
@@ -225,13 +225,13 @@ var d_majiang_card = {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "西"
+        "name": "发"
     }, 
     "91": {
         "count": 4, 
         "flower": 4, 
         "num": 0, 
-        "name": "北"
+        "name": "白"
     }, 
     "131": {
         "count": 1, 

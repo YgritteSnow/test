@@ -1,0 +1,73 @@
+{
+  "ID": "d3d8e2ff-1dda-4b21-801b-bc2a88bcae98",
+  "Version": "3.10.0.0",
+  "Name": "SecondScene",
+  "Content": {
+    "Content": {
+      "Animation": {
+        "Duration": 0,
+        "Speed": 1.0,
+        "Timelines": [],
+        "ctype": "TimelineActionData"
+      },
+      "AnimationList": [],
+      "ObjectData": {
+        "Tag": 99,
+        "Children": [
+          {
+            "FileData": {
+              "Type": "Normal",
+              "Path": "Layer.json",
+              "Plist": ""
+            },
+            "StretchWidthEnable": false,
+            "StretchHeightEnable": false,
+            "InnerActionSpeed": 1.0,
+            "AnchorPoint": {},
+            "Position": {
+              "X": 163.3474,
+              "Y": -21.4951
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.1702,
+              "Y": -0.0336
+            },
+            "PreSize": {
+              "X": 1.0,
+              "Y": 1.0
+            },
+            "LeftMargin": 163.3474,
+            "RightMargin": -163.3474,
+            "TopMargin": 21.4951,
+            "BottomMargin": -21.4951,
+            "Tag": 100,
+            "ActionTag": 1841904647,
+            "Size": {
+              "X": 960.0,
+              "Y": 640.0
+            },
+            "Name": "FileNode_1",
+            "ctype": "ProjectNodeObjectData"
+          }
+        ],
+        "Size": {
+          "X": 960.0,
+          "Y": 640.0
+        },
+        "Name": "Scene",
+        "ctype": "SingleNodeObjectData"
+      },
+      "UsedResources": [
+        "Layer.json"
+      ],
+      "ctype": "GameFileData"
+    }
+  },
+  "Type": "Scene"
+}

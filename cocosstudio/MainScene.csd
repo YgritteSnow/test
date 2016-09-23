@@ -32,11 +32,11 @@
             <OutlineColor A="255" R="255" G="0" B="0" />
             <ShadowColor A="255" R="110" G="110" B="110" />
           </AbstractNodeData>
-          <AbstractNodeData Name="TextField_1" ActionTag="-1587813751" Tag="4" RotationSkewX="11.5984" RotationSkewY="11.5777" IconVisible="False" LeftMargin="103.0002" RightMargin="756.9999" TopMargin="456.0002" BottomMargin="163.9998" TouchEnable="True" FontSize="20" IsCustomSize="True" LabelText="" PlaceHolderText="Text Field" MaxLengthText="10" ctype="TextFieldObjectData">
+          <AbstractNodeData Name="TextField_1" ActionTag="-1587813751" Tag="4" RotationSkewX="11.5996" RotationSkewY="11.5784" IconVisible="False" LeftMargin="103.0002" RightMargin="756.9998" TopMargin="456.0002" BottomMargin="163.9998" TouchEnable="True" FontSize="20" IsCustomSize="True" LabelText="" PlaceHolderText="Text Field" MaxLengthText="10" ctype="TextFieldObjectData">
             <Size X="100.0000" Y="20.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <Position X="153.0002" Y="173.9998" />
-            <Scale ScaleX="1.9937" ScaleY="6.6692" />
+            <Scale ScaleX="2.4644" ScaleY="2.8414" />
             <CColor A="255" R="255" G="255" B="255" />
             <PrePosition X="0.1594" Y="0.2719" />
             <PreSize X="0.1042" Y="0.0313" />
